@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/pigbog-infrastructure/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbog-infrastructure/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-application/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-application/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-controller/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-controller/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-domain/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-domain/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-infrastructure/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-infrastructure/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-start/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pigbox-start/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pixbox-controller/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pixbox-controller/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
