@@ -11,14 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
-import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 @Slf4j
 @Service
@@ -123,6 +117,12 @@ public class TicketDetailCacheService {
 
     private String getEventItemKey(Long id) {
         return id.toString();
+    }
+
+    public void resetLocalCache(Long ticketId) {
+        ticketDetailLocalCache.invalidate(ticketId);
+        this.redisInfrasService.delete(getEventItemKey(ticketId));
+        log.info("TicketDetailCacheService resetLocalCache with ticketId {}", ticketId);
     }
 
 }

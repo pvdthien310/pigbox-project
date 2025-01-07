@@ -1,0 +1,5 @@
+kafka-consumer-config:
+  ticket-detail-reset-topic-id: ticket-detail-reset
+
+ticket-detail-service:
+  reset-topic-name: reset-topic

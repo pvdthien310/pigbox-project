@@ -9,4 +9,6 @@ public interface RedisInfrasService {
     void setObjectWithTtl(String key, Object value, String ttl);
 
     <T> T getOject(String key, Class<T> targetClass);
+
+    void delete(String key);
 }

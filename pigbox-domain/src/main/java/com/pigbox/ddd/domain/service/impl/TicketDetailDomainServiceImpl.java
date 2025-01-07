@@ -19,4 +19,9 @@ public class TicketDetailDomainServiceImpl implements TicketDetailDomainService 
         log.info("Implement Domain : {}", ticketId);
         return ticketDetailRepository.findById(ticketId).orElse(null);
     }
+
+    @Override
+    public void resetTopic() {
+
+    }
 }
