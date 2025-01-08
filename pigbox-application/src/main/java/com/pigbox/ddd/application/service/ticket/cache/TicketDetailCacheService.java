@@ -2,6 +2,7 @@ package com.pigbox.ddd.application.service.ticket.cache;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.pigbox.ddd.application.messaging.ticket.producer.TicketDetailProducerImpl;
 import com.pigbox.ddd.domain.model.entity.TicketDetail;
 import com.pigbox.ddd.domain.model.enums.ResultCode;
 import com.pigbox.ddd.domain.service.TicketDetailDomainService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -25,6 +27,8 @@ public class TicketDetailCacheService {
     private RedisDistributedService redisDistributedService;
     @Autowired
     private TicketDetailDomainService ticketDetailDomainService;
+    @Autowired
+    private TicketDetailProducerImpl ticketDetailProducer;
 
     // Guava cache
     private final static Cache<Long, TicketDetail> ticketDetailLocalCache =
@@ -131,6 +135,7 @@ public class TicketDetailCacheService {
         try {
             ticketDetailDomainService.updateStockAvailable(ticketId, quantity);
             resetLocalCache(ticketId);
+            ticketDetailProducer.publish(List.of(ticketId));
             return ResultCode.SUCCESS;
         } catch (Exception e) {
             log.info("TicketDetailCacheService buyTicket got exception:", e);
