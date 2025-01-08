@@ -6,5 +6,5 @@ public interface TicketDetailDomainService {
 
     TicketDetail getTicketDetailById(Long id);
 
-    void resetTopic();
+    void updateStockAvailable(Long id, Integer stockAvailable);
 }

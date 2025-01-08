@@ -3,6 +3,7 @@ package com.pigbox.ddd.application.service.ticket.cache;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.pigbox.ddd.domain.model.entity.TicketDetail;
+import com.pigbox.ddd.domain.model.enums.ResultCode;
 import com.pigbox.ddd.domain.service.TicketDetailDomainService;
 import com.pigbox.ddd.infrastructure.cache.redis.RedisInfrasService;
 import com.pigbox.ddd.infrastructure.distributed.redisson.RedisDistributedLocker;
@@ -123,6 +124,18 @@ public class TicketDetailCacheService {
         ticketDetailLocalCache.invalidate(ticketId);
         this.redisInfrasService.delete(getEventItemKey(ticketId));
         log.info("TicketDetailCacheService resetLocalCache with ticketId {}", ticketId);
+    }
+
+
+    public ResultCode buyTicket(Long ticketId, Integer quantity) {
+        try {
+            ticketDetailDomainService.updateStockAvailable(ticketId, quantity);
+            resetLocalCache(ticketId);
+            return ResultCode.SUCCESS;
+        } catch (Exception e) {
+            log.info("TicketDetailCacheService buyTicket got exception:", e);
+            return ResultCode.PRODUCT_BRAND_NOT_EXIST;
+        }
     }
 
 }

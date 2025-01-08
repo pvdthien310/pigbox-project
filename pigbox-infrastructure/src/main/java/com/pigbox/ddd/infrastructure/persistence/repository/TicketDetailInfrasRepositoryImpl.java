@@ -6,6 +6,7 @@ import com.pigbox.ddd.infrastructure.persistence.mapper.mysql.TicketDetailJPAMap
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,5 +20,11 @@ public class TicketDetailInfrasRepositoryImpl implements TicketDetailRepository 
     @Override
     public Optional<TicketDetail> findById(Long id) {
         return ticketDetailJPAMapper.findById(id);
+    }
+
+    @Override
+    @Transactional
+    public void updateStockAvailable(Long id, Integer stockAvailable) {
+        ticketDetailJPAMapper.updateStockAvailable(id, stockAvailable);
     }
 }
