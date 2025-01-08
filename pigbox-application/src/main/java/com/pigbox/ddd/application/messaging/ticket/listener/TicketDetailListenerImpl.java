@@ -1,6 +1,7 @@
-package com.pigbox.ddd.application.messaging.ticket;
+package com.pigbox.ddd.application.messaging.ticket.listener;
 
 import com.pigbox.ddd.application.service.ticket.cache.TicketDetailCacheService;
+import com.pigbox.ddd.domain.messing.ticket.listener.TicketDetailListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,14 +14,14 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class TicketDetailListenerHelper implements com.pigbox.ddd.domain.messing.ticket.TicketDetailListenerHelper<String> {
+public class TicketDetailListenerImpl implements TicketDetailListener<Long> {
 
     @Autowired
     TicketDetailCacheService ticketDetailCacheService;
 
     @Override
     @KafkaListener(id = "${kafka-consumer-config.ticket-detail-reset-topic-id}", topics = "${ticket-detail-service.reset-topic-name}")
-    public void receive(@Payload List<String> messages,
+    public void receive(@Payload List<Long> messages,
                         @Header(KafkaHeaders.KEY) List<String> keys,
                         @Header(KafkaHeaders.PARTITION) List<Integer> partitions,
                         @Header(KafkaHeaders.OFFSET) List<Long> offsets) {
@@ -30,6 +31,6 @@ public class TicketDetailListenerHelper implements com.pigbox.ddd.domain.messing
                 partitions.toString(),
                 offsets.toString());
 
-        messages.forEach(value -> ticketDetailCacheService.resetLocalCache(Long.valueOf(value)));
+        messages.forEach(value -> ticketDetailCacheService.resetLocalCache(value));
     }
 }
