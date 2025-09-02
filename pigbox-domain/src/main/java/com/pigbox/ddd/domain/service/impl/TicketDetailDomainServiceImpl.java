@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 @Slf4j
 public class TicketDetailDomainServiceImpl implements TicketDetailDomainService {
@@ -25,20 +23,14 @@ public class TicketDetailDomainServiceImpl implements TicketDetailDomainService 
 
     @Override
     @Transactional
-    public void updateStockAvailable(Long ticketId, Integer stockAvailable) {
-        TicketDetail ticketDetail = getTicketDetailById(ticketId);
-
-        if (Objects.isNull(ticketDetail)) {
-            throw new RuntimeException("Product is not available");
+    public int updateStockAvailable(Long ticketId, Integer quantity, Integer maxRetryTimes) {
+        for (int i = 0; i < maxRetryTimes; i++) {
+            int rowAffected = ticketDetailRepository.updateStockAvailable(ticketId, quantity);
+            if (rowAffected > 0) {
+                return rowAffected;
+            }
         }
-
-        if (ticketDetail.getStockAvailable() < stockAvailable) {
-
-            throw new RuntimeException("Quantity is not enough");
-        }
-
-        ticketDetailRepository.updateStockAvailable(ticketId, stockAvailable);
-
+        return 0;
     }
 
 }

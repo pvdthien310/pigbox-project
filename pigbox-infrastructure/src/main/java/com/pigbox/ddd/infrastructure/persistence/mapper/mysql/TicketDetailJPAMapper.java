@@ -7,12 +7,20 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 public interface TicketDetailJPAMapper extends JpaRepository<TicketDetail, Integer> {
     Optional<TicketDetail> findById(Long id);
 
+    Optional<List<TicketDetail>> findAllByIdIsIn(Collection<Long> ids);
+
     @Modifying
     @Query("UPDATE TicketDetail p SET p.stockAvailable = p.stockAvailable - :stockAvailable WHERE p.id = :id")
     void updateStockAvailable(@Param("id") Long id,  @Param("stockAvailable") Integer stockAvailable);
+
+    @Modifying
+    @Query("UPDATE TicketDetail p SET p.stockAvailable = p.stockAvailable - :quantity WHERE p.id = :id and p.stockAvailable >= :quantity")
+    int updateStockAvailableUsingOptimisticLock(@Param("id") Long id,  @Param("quantity") Integer quantity);
 }

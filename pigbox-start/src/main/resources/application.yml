@@ -25,16 +25,22 @@ spring:
     open-in-view: true
   data:
     redis:
-      host: 127.0.0.1
-      port: 6319
-      password: ""
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
-      connect-timeout: 30000
+#      host: 127.0.0.1
+#      port: 6319
+#      password: ""
+#      lettuce:
+#        pool:
+#          max-active: 8
+#          max-idle: 8
+#          min-idle: 0
+#          max-wait: -1ms
+#      connect-timeout: 30000
+      sentinel:
+        master: mymaster
+        nodes:
+          - 192.168.0.107:26379
+          - 192.168.0.107:26380
+          - 192.168.0.107:26381
   threads:
     virtual:
       enabled: true
@@ -80,7 +86,12 @@ resilience4j:
         timeoutDuration: 3s
 
 kafka-consumer-config:
-  ticket-detail-reset-topic-id: ticket-detail-reset
+  ticket-detail-reset-topic-id: ticket-detail-reset-${server.port}
 
 ticket-detail-service:
   reset-topic-name: reset-topic
+
+host:
+  docker:
+    internal:
+      port: "127.0.0.1"

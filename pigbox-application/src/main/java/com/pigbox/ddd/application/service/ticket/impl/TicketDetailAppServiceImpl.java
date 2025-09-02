@@ -25,4 +25,9 @@ public class TicketDetailAppServiceImpl implements TicketDetailAppService {
         return ticketDetailCacheService.buyTicket(ticketId, quantity);
     }
 
+    @Override
+    public Integer getStockInCache(Long ticketId) {
+        return ticketDetailCacheService.getStockInCache(ticketId);
+    }
+
 }

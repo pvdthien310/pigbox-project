@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,8 +24,13 @@ public class TicketDetailInfrasRepositoryImpl implements TicketDetailRepository 
     }
 
     @Override
+    public Optional<List<TicketDetail>> findByIds(List<Long> ids) {
+        return ticketDetailJPAMapper.findAllByIdIsIn(ids);
+    }
+
+    @Override
     @Transactional
-    public void updateStockAvailable(Long id, Integer stockAvailable) {
-        ticketDetailJPAMapper.updateStockAvailable(id, stockAvailable);
+    public int updateStockAvailable(Long id, Integer quantity) {
+        return ticketDetailJPAMapper.updateStockAvailableUsingOptimisticLock(id, quantity);
     }
 }

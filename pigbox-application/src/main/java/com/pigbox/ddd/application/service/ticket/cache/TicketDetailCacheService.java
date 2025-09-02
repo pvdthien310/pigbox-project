@@ -130,10 +130,9 @@ public class TicketDetailCacheService {
         log.info("TicketDetailCacheService resetLocalCache with ticketId {}", ticketId);
     }
 
-
     public ResultCode buyTicket(Long ticketId, Integer quantity) {
         try {
-            ticketDetailDomainService.updateStockAvailable(ticketId, quantity);
+            ticketDetailDomainService.updateStockAvailable(ticketId, quantity, 3);
             resetLocalCache(ticketId);
             ticketDetailProducer.publish(List.of(ticketId));
             return ResultCode.SUCCESS;
@@ -141,6 +140,15 @@ public class TicketDetailCacheService {
             log.info("TicketDetailCacheService buyTicket got exception:", e);
             return ResultCode.PRODUCT_BRAND_NOT_EXIST;
         }
+    }
+
+    public Integer getStockInCache(Long ticketId) {
+        String ticketStockKey = "STOCK:" + getEventItemKey(ticketId);
+        return redisInfrasService.getInt(ticketStockKey);
+    }
+
+    public Integer getStockInDb(Long ticketId) {
+        return ticketDetailDomainService.getTicketDetailById(ticketId).getStockAvailable();
     }
 
 }

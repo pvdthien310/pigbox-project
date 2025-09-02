@@ -17,9 +17,23 @@ import java.util.Optional;
 @Slf4j
 public class RedisInfrasServiceImpl implements RedisInfrasService {
 
-
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Override
+    public void setInt(String key, Integer value) {
+        if (value == null) {
+            return;
+        }
+        redisTemplate.opsForValue().set(key, value);
+    }
+
+    @Override
+    public Integer getInt(String key) {
+        return Optional.ofNullable(redisTemplate.opsForValue().get(key))
+                .map(item -> Integer.parseInt(item.toString()))
+                .orElse(null);
+    }
 
     @Override
     public void setString(String key, String value) {
@@ -100,5 +114,10 @@ public class RedisInfrasServiceImpl implements RedisInfrasService {
     @Override
     public void delete(String key) {
         redisTemplate.delete(key);
+    }
+
+    @Override
+    public RedisTemplate<String, Object> getRedisTemplate() {
+        return redisTemplate;
     }
 }

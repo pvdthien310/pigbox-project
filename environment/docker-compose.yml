@@ -1,8 +1,4 @@
-version: '3.2'
-
-networks:
-  pre-event-network:
-    driver: bridge
+version: '3.8'
 
 services:
   mysql:
@@ -24,14 +20,14 @@ services:
       - "3316:3306"
     networks:
       - pre-event-network
-  #Redis
-  redis:
-    container_name: pre-event-redis
-    image: redislabs/redismod:latest
-    ports:
-      - "6319:6379"
-    networks:
-      - pre-event-network
+
+#  redis:
+#    container_name: pre-event-redis
+#    image: redislabs/redismod:latest
+#    ports:
+#      - "6319:6379"
+#    networks:
+#      - pre-event-network
 
   redis-insight:
     image: redis/redisinsight:latest
@@ -133,7 +129,7 @@ services:
     container_name: kafbat-ui
     image: ghcr.io/kafbat/kafka-ui:latest
     ports:
-      - 8080:8080
+      - 8081:8080
     depends_on:
       - kafka0
       - kafka1
@@ -278,3 +274,93 @@ services:
                kafka-topics --create --topic second.messages --partitions 2 --replication-factor 1 --if-not-exists --bootstrap-server kafka1:29092 && \
                kafka-topics --create --topic first.messages --partitions 2 --replication-factor 1 --if-not-exists --bootstrap-server kafka0:29092 && \
                kafka-console-producer --bootstrap-server kafka1:29092 -topic second.users < /data/message.json'"
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - pre-event-network
+
+  redis-1:
+    container_name: pre-event-redis-1
+    image: redis:6.2
+    restart: always
+    ports:
+      - "6319:6379"
+    networks:
+      - pre-event-network
+    command: redis-server --appendonly yes --replica-announce-ip "192.168.0.107" --replica-announce-port 6319 --bind 0.0.0.0 --protected-mode no
+
+  redis-2:
+    container_name: pre-event-redis-2
+    image: redis:6.2
+    restart: always
+    depends_on:
+      - redis-1
+    ports:
+      - "6320:6379"
+    networks:
+      - pre-event-network
+    command: redis-server --appendonly yes --replicaof 192.168.0.107 6319  --replica-announce-ip "192.168.0.107" --replica-announce-port 6320 --bind 0.0.0.0 --protected-mode no
+
+  redis-3:
+    container_name: pre-event-redis-3
+    image: redis:6.2
+    restart: always
+    depends_on:
+      - redis-2
+    ports:
+      - "6321:6379"
+    networks:
+      - pre-event-network
+    command: redis-server --appendonly yes --replicaof 192.168.0.107 6319  --replica-announce-ip "192.168.0.107" --replica-announce-port 6321 --bind 0.0.0.0 --protected-mode no
+
+  redis-sentinel-1:
+    image: redis
+    container_name: redis-sentinel-1
+    restart: always
+    depends_on:
+      - redis-3
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./sentinel/sentinel1:/data
+    command: ["redis-sentinel", "/data/sentinel.conf"]
+    networks:
+      - pre-event-network
+
+  redis-sentinel-2:
+    image: redis
+    container_name: redis-sentinel-2
+    restart: always
+    depends_on:
+      - redis-3
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./sentinel/sentinel2:/data
+    command: [ "redis-sentinel", "/data/sentinel.conf" ]
+    networks:
+      - pre-event-network
+
+  redis-sentinel-3:
+    image: redis
+    container_name: redis-sentinel-3
+    restart: always
+    depends_on:
+      - redis-3
+    ports:
+      - "26381:26379"
+    volumes:
+      - ./sentinel/sentinel3:/data
+    command: [ "redis-sentinel", "/data/sentinel.conf" ]
+    networks:
+      - pre-event-network
+
+networks:
+  pre-event-network:
+    driver: bridge
